@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker'
 
 const options = { env: { snapshotOnly: true }}
 
-describe('Create Issue', options, () => {
+describe('Create issue', options, () => {
     const issue = {
         title: `issue-${faker.datatype.uuid()}`,
         description: faker.random.words(3),
@@ -15,15 +15,17 @@ describe('Create Issue', options, () => {
     beforeEach(() => {
         cy.api_deleteProjects()
         cy.login()
-        cy.api_createProject(issue.project)
-        
+
     })
 
     it('sucessfully', () => {
-        cy.gui_createIssue(issue)
+        cy.api_createIssue(issue)   
+            .then(response => {
+                expect(response.status).to.equal(201)
+                expect(response.body.title).to.equal(issue.title)
+                expect(response.body.description).to.equal(issue.description)
+            })
+})
 
-        cy.get('.issue-details')
-          .should('contain', issue.title)
-          .and('contain', issue.description)
-    })
+
 })
